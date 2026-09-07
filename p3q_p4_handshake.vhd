@@ -10,30 +10,28 @@ entity p3q_p4_handshake is
     port (
         clk           : in  std_logic;
         rst_n         : in  std_logic;
-        
-        -- P4 Settlement Interface (Classical)
+
         p4_event_valid : in  std_logic;
         p4_event_id    : in  std_logic_vector(31 downto 0);
         p4_event_type  : in  std_logic_vector(7 downto 0);
         p4_event_params: in  std_logic_vector(255 downto 0);
         p4_deadline    : in  std_logic_vector(63 downto 0);
         p4_event_ready : out std_logic;
-        
+
         p4_result_valid: out std_logic;
         p4_result_id   : out std_logic_vector(31 downto 0);
         p4_result_status: out std_logic_vector(7 downto 0);
         p4_result_data : out std_logic_vector(511 downto 0);
         p4_result_shots: out std_logic_vector(31 downto 0);
         p4_result_ready: in  std_logic;
-        
-        -- Quantum Simulator Interface (Classical to/from Simulator)
+
         qsim_cmd_valid : out std_logic;
         qsim_cmd_type  : out std_logic_vector(7 downto 0);
         qsim_cmd_qubits: out std_logic_vector(15 downto 0);
         qsim_cmd_shots : out std_logic_vector(31 downto 0);
         qsim_cmd_params: out std_logic_vector(511 downto 0);
         qsim_cmd_ready : in  std_logic;
-        
+
         qsim_rsp_valid : in  std_logic;
         qsim_rsp_id    : in  std_logic_vector(31 downto 0);
         qsim_rsp_status: in  std_logic_vector(7 downto 0);
@@ -46,15 +44,13 @@ end entity p3q_p4_handshake;
 architecture rtl of p3q_p4_handshake is
     type state_t is (IDLE, TRANSLATE, ISSUE_CMD, WAIT_RSP, FORMAT_RSP, DONE);
     signal state : state_t := IDLE;
-    
+
     signal event_id_reg    : std_logic_vector(31 downto 0);
     signal event_type_reg  : std_logic_vector(7 downto 0);
     signal deadline_reg    : std_logic_vector(63 downto 0);
     signal cycle_counter   : unsigned(63 downto 0);
-    signal shots_reg       : std_logic_vector(31 downto 0);
-    
+
 begin
-    -- Deadline counter
     process(clk, rst_n)
     begin
         if rst_n = '0' then
@@ -67,8 +63,7 @@ begin
             end if;
         end if;
     end process;
-    
-    -- Main handshake FSM
+
     process(clk, rst_n)
     begin
         if rst_n = '0' then
@@ -89,34 +84,33 @@ begin
                         p4_event_ready <= '0';
                         state          <= TRANSLATE;
                     end if;
-                
+
                 when TRANSLATE =>
-                    -- Map P4 event_type to quantum simulator command
                     case event_type_reg is
-                        when x"01" => -- KeyGen
-                            qsim_cmd_type  <= x"01";
-                            qsim_cmd_qubits<= x"0100"; -- 256 qubits
-                            qsim_cmd_shots <= std_logic_vector(to_unsigned(1, 32));
-                        when x"02" => -- Nonce
-                            qsim_cmd_type  <= x"02";
-                            qsim_cmd_qubits<= x"0080"; -- 128 qubits
-                            qsim_cmd_shots <= std_logic_vector(to_unsigned(1, 32));
-                        when x"03" => -- Grover Search
-                            qsim_cmd_type  <= x"03";
-                            qsim_cmd_qubits<= x"0200"; -- 512 qubits (key+state+ancilla)
-                            qsim_cmd_shots <= std_logic_vector(to_unsigned(MAX_SHOTS, 32));
-                        when x"04" => -- Amplitude Estimation
-                            qsim_cmd_type  <= x"04";
-                            qsim_cmd_qubits<= x"0101"; -- 257 qubits
-                            qsim_cmd_shots <= std_logic_vector(to_unsigned(MAX_SHOTS, 32));
+                        when x"01" =>
+                            qsim_cmd_type   <= x"01";
+                            qsim_cmd_qubits <= x"0100";
+                            qsim_cmd_shots  <= std_logic_vector(to_unsigned(1, 32));
+                        when x"02" =>
+                            qsim_cmd_type   <= x"02";
+                            qsim_cmd_qubits <= x"0080";
+                            qsim_cmd_shots  <= std_logic_vector(to_unsigned(1, 32));
+                        when x"03" =>
+                            qsim_cmd_type   <= x"03";
+                            qsim_cmd_qubits <= x"0200";
+                            qsim_cmd_shots  <= std_logic_vector(to_unsigned(MAX_SHOTS, 32));
+                        when x"04" =>
+                            qsim_cmd_type   <= x"04";
+                            qsim_cmd_qubits <= x"0101";
+                            qsim_cmd_shots  <= std_logic_vector(to_unsigned(MAX_SHOTS, 32));
                         when others =>
-                            qsim_cmd_type  <= x"FF"; -- Error
-                            qsim_cmd_qubits<= x"0000";
-                            qsim_cmd_shots <= x"00000000";
+                            qsim_cmd_type   <= x"FF";
+                            qsim_cmd_qubits <= x"0000";
+                            qsim_cmd_shots  <= x"00000000";
                     end case;
                     qsim_cmd_params <= p4_event_params;
                     state <= ISSUE_CMD;
-                
+
                 when ISSUE_CMD =>
                     qsim_cmd_valid <= '1';
                     if qsim_cmd_ready = '1' then
@@ -124,25 +118,27 @@ begin
                         qsim_rsp_ready <= '1';
                         state <= WAIT_RSP;
                     end if;
-                
+
                 when WAIT_RSP =>
                     if qsim_rsp_valid = '1' then
                         qsim_rsp_ready <= '0';
                         state <= FORMAT_RSP;
                     elsif cycle_counter >= unsigned(deadline_reg) then
-                        -- Timeout
-                        qsim_rsp_ready <= '0';
-                        p4_result_status <= x"01"; -- Timeout
+                        qsim_rsp_ready    <= '0';
+                        p4_result_status  <= x"01";
+                        p4_result_id      <= event_id_reg;
+                        p4_result_data    <= (others => '0');
+                        p4_result_shots   <= (others => '0');
                         state <= DONE;
                     end if;
-                
+
                 when FORMAT_RSP =>
                     p4_result_id     <= qsim_rsp_id;
                     p4_result_status <= qsim_rsp_status;
                     p4_result_data   <= qsim_rsp_data;
                     p4_result_shots  <= qsim_rsp_shots;
                     state <= DONE;
-                
+
                 when DONE =>
                     p4_result_valid <= '1';
                     if p4_result_ready = '1' then

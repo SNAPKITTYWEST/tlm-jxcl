@@ -6,12 +6,10 @@ entity p4_tsql_settler is
     port (
         clk : in std_logic;
         rst_n : in std_logic;
-        
-        -- Inputs from ANu
+
         t_sql_index : in std_logic_vector(31 downto 0);
         q_seed_valid : in std_logic;
-        
-        -- P4 Settlement Outputs
+
         settle_valid : out std_logic;
         settle_id : out std_logic_vector(63 downto 0);
         settle_index : out std_logic_vector(31 downto 0)
@@ -29,12 +27,9 @@ begin
             settle_valid <= '0';
         elsif rising_edge(clk) then
             settle_valid <= '0';
-            
+
             if q_seed_valid = '1' then
-                -- Increment Settlement ID (Ensures strict ordering)
                 sequence_cnt <= sequence_cnt + 1;
-                
-                -- Output the settled pair: (SequenceID, T-SQL Index)
                 settle_id <= std_logic_vector(sequence_cnt + 1);
                 settle_index <= t_sql_index;
                 settle_valid <= '1';

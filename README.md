@@ -148,6 +148,10 @@
 ║  FF 00 00 00         ║  E5 FF FF 1A         ║  PASS     ║
 ║  50 50 50 50         ║  50 50 50 50         ║  PASS     ║
 ║  80 00 80 00         ║  F0 A0 F0 A0         ║  PASS     ║
+║  AA 55 AA 55         ║  FF 00 FF 00         ║  PASS     ║
+║  FF FF FF FF         ║  00 00 00 00         ║  PASS     ║
+║  01 00 00 00         ║  01 01 00 01         ║  PASS     ║
+║  80 00 00 00         ║  9B 1B 00 9B         ║  PASS     ║
 ╚══════════════════════╩══════════════════════╩═══════════╝
 ```
 
@@ -160,7 +164,7 @@ tlm-p3q-system/
 │
 ├── VHDL Files
 │   ├── tlm_p3_gate.vhd              Main MixColumns implementation
-│   ├── tlm_p3_gate_tb.vhd           Testbench with 6 vectors
+│   ├── tlm_p3_gate_tb.vhd           Testbench with 10 vectors
 │   ├── anu_entropy_bridge.vhd        Entropy normalization unit
 │   ├── p3q_p4_handshake.vhd          Classical-quantum FSM
 │   └── p4_tsql_settler.vhd           T=SQL settlement sequencer
@@ -173,6 +177,7 @@ tlm-p3q-system/
 │
 ├── Python
 │   ├── tsql_engine.py               T=SQL query engine
+│   ├── p3q_simulator.py             Classical P4 interlock simulator
 │   └── p3q_tensor_sim.py            Tensor network simulator
 │
 ├── OpenQASM 3.0
