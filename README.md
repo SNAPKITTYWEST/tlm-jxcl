@@ -17,6 +17,43 @@
 
 ---
 
+## 專案概述 / نظرة عامة / Project Overview
+
+**P3Q-TLM** (拓撲帳本流形與量子驗證核心 / المنارة التوبولوجية للدفتر الأستاذ)
+
+本專案結合了高效率的 𝔽₂⁸ 密碼學管線 (الخطوط الأنبوبية المشفرة) 與形式化驗證框架 (إطار التحقق الشكلاني)，旨在透過主權運算架構實現確定性狀態轉移、零誤差安全證明與可逆量子電路模擬 (Al-Amān As-Sārim).
+
+### 核心模組架構 / هيكل الوحدات الأساسية / Core Module Architecture
+
+| 模組 / 那位 / Module | 描述 / 描述 / Description |
+|---|---|
+| **P3 Gate-Level VHDL** (`tlm_p3_gate.vhd`) | 純組合邏輯閘設計 (منطق بوابي بحت) — AES MixColumns via xtime without lookup tables, ≤4 XOR levels, >500 MHz |
+| **Lean 4 Formalization** (`MixColumns.lean`) | 特徵 2 有限域代數性質 (خصائص الجبر الثنائي) — zero-sorry proofs for xtime_linear & Trace Conservation |
+| **OpenQASM 3.0 Reversible Circuits** (`p3q_reversible_aes4.qasm`) | Boyar-Peralta 可逆 S-Box 與 4 輪 AES (دائرة التشفير العكسية) — Clifford+T count: 4,400/iteration |
+| **Tensor Network Simulation** (`p3q_tensor_sim.py`) | 矩陣乘積態 MPS 模擬器 (高維張量收縮 + SVD 截斷) — up to 50+ qubit systems |
+
+### 快速啟動 / Quick Start
+
+```bash
+# VHDL 測試平台 (تشغيل المحاكي)
+ghdl -a tlm_p3_gate.vhd tlm_p3_gate_tb.vhd
+ghdl -e tlm_p3_gate_tb
+ghdl -r tlm_p3_gate_tb --wave=wave.ghw
+
+# Lean 4 形式化驗證 (التحقق الرياضي)
+lake build AES.Formal
+```
+
+### 驗證矩陣 / مصفوفة الثوابت / Verification Matrix
+
+| 模組 / 那位 | 驗證目標 / هدف التحقق | 求解後端 / محرك الحل | 狀態 / الحالة |
+|---|---|---|---|
+| P3 VHDL | 邏輯閘時序與規範向量映射 | GHDL / ModelSim | 通過 (Pass) |
+| Lean 4 | 特徵 2 分配律與不可約多項式 | Lean 4 Kernel | 驗證中 (Verified) |
+| MPS Sim | 狀態矩陣迹數與流形不變量 | NumPy / SciPy | 執行中 (Active) |
+
+---
+
 ## Architecture
 
 ```
@@ -170,7 +207,8 @@ tlm-p3q-system/
 │   └── p4_tsql_settler.vhd           T=SQL settlement sequencer
 │
 ├── Pascal
-│   └── tlm_quantum_number_generator.pas  Recursive quantum generator
+│   ├── tlm_quantum_number_generator.pas  Recursive quantum generator
+│   └── tlm_qng_j.pas                    QNG variant
 │
 ├── Lean 4
 │   └── P3QInterface.lean            Formal verification proofs
@@ -201,7 +239,7 @@ tlm-p3q-system/
 │  Deterministic Output      │  Same input -> same output       │
 │  No State Leakage          │  Stateless (no registers)        │
 │  Formally Verified         │  Lean 4 proofs                   │
-│  Test Vector Validated     │  6 deterministic vectors         │
+│  Test Vector Validated     │  10 deterministic vectors        │
 └────────────────────────────┴───────────────────────────────────┘
 ```
 
