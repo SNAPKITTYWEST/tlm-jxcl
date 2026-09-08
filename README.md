@@ -239,13 +239,6 @@ tlm-jxcl/
 │   ├── p3q_interface.qasm           Classical-quantum interface
 │   └── p3q_reversible_aes4.qasm     Reversible AES Grover oracle
 │
-├── watermark/
-│   ├── neutralizer.py               NLTK semantic watermark neutralizer
-│   ├── ast_stripper.py              Deterministic AST watermark stripper
-│   ├── random_stripper.py           Randomized AST watermark stripper
-│   ├── torch_dataset.py             PyTorch SanitizedCodeDataset wrapper
-│   └── algorithm.md                 OPAQUE-SEMANTIC-BRAID formal specification
-│
 ├── rust/
 │   └── fibonacci_braid.rs           Lossless Fibonacci braid cipher
 │
