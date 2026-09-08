@@ -232,7 +232,8 @@ tlm-jxcl/
 │   ├── tsql_engine.py               T=SQL query engine
 │   ├── p3q_simulator.py             Classical P4 interlock simulator
 │   ├── p3q_tensor_sim.py            Tensor network simulator
-│   └── watermark_stripper.py         AST-based watermark stripper
+│   ├── watermark_stripper.py         AST-based watermark stripper
+│   └── stealth_obfuscator.py        Full stealth pipeline (AST+Braid+RSA+VDF+SSS)
 │
 ├── qasm/
 │   ├── p3q_interface.qasm           Classical-quantum interface
