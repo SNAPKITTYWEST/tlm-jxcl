@@ -1,0 +1,120 @@
+// Pseudo-SASS research target. Mnemonics are annotated, not asserted as universal binary encodings.
+/* ROUTER */
+S2R R0, SR_TID.X;
+S2R R1, SR_CTAID.X;
+LOP3 R2, R0, R1, RZ, 0x96;
+/* BUTTERFLY */
+SHFL.XOR R8, R8, 16, 0x1f;
+FADD R9, R9, R8;
+SHFL.XOR R8, R8, 8, 0x1f;
+FADD R9, R9, R8;
+SHFL.XOR R8, R8, 4, 0x1f;
+FADD R9, R9, R8;
+SHFL.XOR R8, R8, 2, 0x1f;
+FADD R9, R9, R8;
+SHFL.XOR R8, R8, 1, 0x1f;
+FADD R9, R9, R8;
+/* GATED DELTA */
+FADD R10, R6, -R7;
+FMUL R10, R10, R11;
+/* MEMORY */
+LDG.E R12, [R20];
+STG.E [R21], R12;
+/* LOCK */
+LOP3 R13, R12, R14, R15, 0x96;
+EXIT;
+// SASS annotation 001: register ownership, dependency edge, scheduler constraint.
+// SASS annotation 002: register ownership, dependency edge, scheduler constraint.
+// SASS annotation 003: register ownership, dependency edge, scheduler constraint.
+// SASS annotation 004: register ownership, dependency edge, scheduler constraint.
+// SASS annotation 005: register ownership, dependency edge, scheduler constraint.
+// SASS annotation 006: register ownership, dependency edge, scheduler constraint.
+// SASS annotation 007: register ownership, dependency edge, scheduler constraint.
+// SASS annotation 008: register ownership, dependency edge, scheduler constraint.
+// SASS annotation 009: register ownership, dependency edge, scheduler constraint.
+// SASS annotation 010: register ownership, dependency edge, scheduler constraint.
+// SASS annotation 011: register ownership, dependency edge, scheduler constraint.
+// SASS annotation 012: register ownership, dependency edge, scheduler constraint.
+// SASS annotation 013: register ownership, dependency edge, scheduler constraint.
+// SASS annotation 014: register ownership, dependency edge, scheduler constraint.
+// SASS annotation 015: register ownership, dependency edge, scheduler constraint.
+// SASS annotation 016: register ownership, dependency edge, scheduler constraint.
+// SASS annotation 017: register ownership, dependency edge, scheduler constraint.
+// SASS annotation 018: register ownership, dependency edge, scheduler constraint.
+// SASS annotation 019: register ownership, dependency edge, scheduler constraint.
+// SASS annotation 020: register ownership, dependency edge, scheduler constraint.
+// SASS annotation 021: register ownership, dependency edge, scheduler constraint.
+// SASS annotation 022: register ownership, dependency edge, scheduler constraint.
+// SASS annotation 023: register ownership, dependency edge, scheduler constraint.
+// SASS annotation 024: register ownership, dependency edge, scheduler constraint.
+// SASS annotation 025: register ownership, dependency edge, scheduler constraint.
+// SASS annotation 026: register ownership, dependency edge, scheduler constraint.
+// SASS annotation 027: register ownership, dependency edge, scheduler constraint.
+// SASS annotation 028: register ownership, dependency edge, scheduler constraint.
+// SASS annotation 029: register ownership, dependency edge, scheduler constraint.
+// SASS annotation 030: register ownership, dependency edge, scheduler constraint.
+// SASS annotation 031: register ownership, dependency edge, scheduler constraint.
+// SASS annotation 032: register ownership, dependency edge, scheduler constraint.
+// SASS annotation 033: register ownership, dependency edge, scheduler constraint.
+// SASS annotation 034: register ownership, dependency edge, scheduler constraint.
+// SASS annotation 035: register ownership, dependency edge, scheduler constraint.
+// SASS annotation 036: register ownership, dependency edge, scheduler constraint.
+// SASS annotation 037: register ownership, dependency edge, scheduler constraint.
+// SASS annotation 038: register ownership, dependency edge, scheduler constraint.
+// SASS annotation 039: register ownership, dependency edge, scheduler constraint.
+// SASS annotation 040: register ownership, dependency edge, scheduler constraint.
+// SASS annotation 041: register ownership, dependency edge, scheduler constraint.
+// SASS annotation 042: register ownership, dependency edge, scheduler constraint.
+// SASS annotation 043: register ownership, dependency edge, scheduler constraint.
+// SASS annotation 044: register ownership, dependency edge, scheduler constraint.
+// SASS annotation 045: register ownership, dependency edge, scheduler constraint.
+// SASS annotation 046: register ownership, dependency edge, scheduler constraint.
+// SASS annotation 047: register ownership, dependency edge, scheduler constraint.
+// SASS annotation 048: register ownership, dependency edge, scheduler constraint.
+// SASS annotation 049: register ownership, dependency edge, scheduler constraint.
+// SASS annotation 050: register ownership, dependency edge, scheduler constraint.
+// SASS annotation 051: register ownership, dependency edge, scheduler constraint.
+// SASS annotation 052: register ownership, dependency edge, scheduler constraint.
+// SASS annotation 053: register ownership, dependency edge, scheduler constraint.
+// SASS annotation 054: register ownership, dependency edge, scheduler constraint.
+// SASS annotation 055: register ownership, dependency edge, scheduler constraint.
+// SASS annotation 056: register ownership, dependency edge, scheduler constraint.
+// SASS annotation 057: register ownership, dependency edge, scheduler constraint.
+// SASS annotation 058: register ownership, dependency edge, scheduler constraint.
+// SASS annotation 059: register ownership, dependency edge, scheduler constraint.
+// SASS annotation 060: register ownership, dependency edge, scheduler constraint.
+// SASS annotation 061: register ownership, dependency edge, scheduler constraint.
+// SASS annotation 062: register ownership, dependency edge, scheduler constraint.
+// SASS annotation 063: register ownership, dependency edge, scheduler constraint.
+// SASS annotation 064: register ownership, dependency edge, scheduler constraint.
+// SASS annotation 065: register ownership, dependency edge, scheduler constraint.
+// SASS annotation 066: register ownership, dependency edge, scheduler constraint.
+// SASS annotation 067: register ownership, dependency edge, scheduler constraint.
+// SASS annotation 068: register ownership, dependency edge, scheduler constraint.
+// SASS annotation 069: register ownership, dependency edge, scheduler constraint.
+// SASS annotation 070: register ownership, dependency edge, scheduler constraint.
+// SASS annotation 071: register ownership, dependency edge, scheduler constraint.
+// SASS annotation 072: register ownership, dependency edge, scheduler constraint.
+// SASS annotation 073: register ownership, dependency edge, scheduler constraint.
+// SASS annotation 074: register ownership, dependency edge, scheduler constraint.
+// SASS annotation 075: register ownership, dependency edge, scheduler constraint.
+// SASS annotation 076: register ownership, dependency edge, scheduler constraint.
+// SASS annotation 077: register ownership, dependency edge, scheduler constraint.
+// SASS annotation 078: register ownership, dependency edge, scheduler constraint.
+// SASS annotation 079: register ownership, dependency edge, scheduler constraint.
+// SASS annotation 080: register ownership, dependency edge, scheduler constraint.
+// SASS annotation 081: register ownership, dependency edge, scheduler constraint.
+// SASS annotation 082: register ownership, dependency edge, scheduler constraint.
+// SASS annotation 083: register ownership, dependency edge, scheduler constraint.
+// SASS annotation 084: register ownership, dependency edge, scheduler constraint.
+// SASS annotation 085: register ownership, dependency edge, scheduler constraint.
+// SASS annotation 086: register ownership, dependency edge, scheduler constraint.
+// SASS annotation 087: register ownership, dependency edge, scheduler constraint.
+// SASS annotation 088: register ownership, dependency edge, scheduler constraint.
+// SASS annotation 089: register ownership, dependency edge, scheduler constraint.
+// SASS annotation 090: register ownership, dependency edge, scheduler constraint.
+// SASS annotation 091: register ownership, dependency edge, scheduler constraint.
+// SASS annotation 092: register ownership, dependency edge, scheduler constraint.
+// SASS annotation 093: register ownership, dependency edge, scheduler constraint.
+// SASS annotation 094: register ownership, dependency edge, scheduler constraint.
+// SASS annotation 095: register ownership, dependency edge, scheduler constraint.
