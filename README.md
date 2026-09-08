@@ -51,6 +51,7 @@ lake build AES.Formal
 | P3 VHDL | 邏輯閘時序與規範向量映射 | GHDL / ModelSim | 通過 (Pass) |
 | Lean 4 | 特徵 2 分配律與不可約多項式 | Lean 4 Kernel | 驗證中 (Verified) |
 | MPS Sim | 狀態矩陣迹數與流形不變量 | NumPy / SciPy | 執行中 (Active) |
+| JXCL ISA | 32 opcodes, spiral, xtime, MixColumns, recursion | GCC -O2 | 通過 (Pass) |
 
 ---
 
@@ -163,11 +164,20 @@ lake build AES.Formal
 
 ```
 ┌───────────────────────────────────────────────────────────────┐
-│  t  = a0 XOR a1 XOR a2 XOR a3                                 │
-│  y0 = a0 XOR t XOR xtime(a0 XOR a1)                           │
-│  y1 = a1 XOR t XOR xtime(a1 XOR a2)                           │
-│  y2 = a2 XOR t XOR xtime(a2 XOR a3)                           │
-│  y3 = a3 XOR t XOR xtime(a3 XOR a0)                           │
+│  Standard AES MixColumns (FIPS 197, §5.1.3):                  │
+│                                                               │
+│  y0 = 2*a0 ⊕ 3*a1 ⊕ 1*a2 ⊕ 1*a3                            │
+│  y1 = 1*a0 ⊕ 2*a1 ⊕ 3*a2 ⊕ 1*a3                            │
+│  y2 = 1*a0 ⊕ 1*a1 ⊕ 2*a2 ⊕ 3*a3                            │
+│  y3 = 3*a0 ⊕ 1*a1 ⊕ 1*a2 ⊕ 2*a3                            │
+│                                                               │
+│  Where: 2*x = xtime(x), 3*x = xtime(x) ⊕ x                 │
+│  This is equivalent to the VHDL t-based formula:              │
+│  t = a0⊕a1⊕a2⊕a3                                            │
+│  y0 = xtime(a0) ⊕ xtime(a1) ⊕ a1 ⊕ a2 ⊕ a3                │
+│  y1 = a0 ⊕ xtime(a1) ⊕ xtime(a2) ⊕ a2 ⊕ a3                │
+│  y2 = a0 ⊕ a1 ⊕ xtime(a2) ⊕ xtime(a3) ⊕ a3                │
+│  y3 = xtime(a0) ⊕ a0 ⊕ a1 ⊕ a2 ⊕ xtime(a3)                │
 └───────────────────────────────────────────────────────────────┘
 ```
 
@@ -181,14 +191,14 @@ lake build AES.Formal
 ╠══════════════════════╬══════════════════════╬═══════════╣
 ║  D4 BF 5D 30         ║  04 66 81 E5         ║  PASS     ║
 ║  00 00 00 00         ║  00 00 00 00         ║  PASS     ║
+║  50 50 50 50         ║  50 50 50 50         ║  PASS     ║
+║  FF FF FF FF         ║  FF FF FF FF         ║  PASS     ║
+║  80 00 80 00         ║  9B 1B 9B 1B         ║  PASS     ║
 ║  01 02 04 08         ║  08 01 13 15         ║  PASS     ║
 ║  FF 00 00 00         ║  E5 FF FF 1A         ║  PASS     ║
-║  50 50 50 50         ║  50 50 50 50         ║  PASS     ║
-║  80 00 80 00         ║  F0 A0 F0 A0         ║  PASS     ║
-║  AA 55 AA 55         ║  FF 00 FF 00         ║  PASS     ║
-║  FF FF FF FF         ║  00 00 00 00         ║  PASS     ║
-║  01 00 00 00         ║  01 01 00 01         ║  PASS     ║
-║  80 00 00 00         ║  9B 1B 00 9B         ║  PASS     ║
+║  80 00 00 00         ║  1B 80 80 9B         ║  PASS     ║
+║  01 00 00 00         ║  02 01 01 03         ║  PASS     ║
+║  AA 55 AA 55         ║  4F B0 4F B0         ║  PASS     ║
 ╚══════════════════════╩══════════════════════╩═══════════╝
 ```
 
@@ -221,6 +231,13 @@ tlm-p3q-system/
 ├── OpenQASM 3.0
 │   ├── p3q_interface.qasm           Classical-quantum interface
 │   └── p3q_reversible_aes4.qasm     Reversible AES Grover oracle
+│
+├── JXCL ISA (C)
+│   ├── jxcl_isa.h                   Types, opcodes, registers, memory map
+│   ├── jxcl_impl.h                  Primitives: xtime, MixColumns, GF(2^8), state
+│   ├── jxcl_impl2.h                 Spiral permutation, decode, execute, recursion
+│   ├── jxcl_impl3.h                 Machine, self-test, P3 compat, audit
+│   └── jxcl_main.c                  13-phase entrypoint
 │
 ├── LICENSE                           MIT License
 └── README.md                         This file
@@ -280,6 +297,18 @@ python3 tsql_engine.py
 ```bash
 python3 p3q_tensor_sim.py
 ```
+
+### JXCL ISA Implementation
+
+```bash
+gcc -Wall -Wextra -O2 -o jxcl.exe jxcl_main.c
+./jxcl.exe
+```
+
+13 phases: self-test (39 vectors), P3 compatibility, core frame execution,
+spiral consumption, recursive depth sweep, xtime exhaustive (256),
+mixcolumns exhaustive, full machine run, trace dump, source injection,
+fibonacci fold, boundary rotation, GF(2^56) multiply.
 
 ---
 
