@@ -1,0 +1,24 @@
+# Build artifacts
+*.exe
+*.o
+*.obj
+*.out
+*.app
+
+# VHDL
+*.ghw
+*.vcd
+*.wlf
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Lean 4
+.lean/
+lake-packages/
+
+# OS
+.DS_Store
+Thumbs.db

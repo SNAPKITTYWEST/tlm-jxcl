@@ -1,17 +1,18 @@
-# TLM P3Q System
+# TLM-JXCL
 
 ```
 ╔═══════════════════════════════════════════════════════════════════════════════╗
-║  TLM P3Q SYSTEM - Gate-Level AES MixColumns + Quantum Interface             ║
+║  TLM-JXCL - JXCL ISA + Gate-Level AES MixColumns + Quantum Interface        ║
 ║  Cybersecurity-Verified • Formally Proven • Hardware-Synthesizable          ║
 ╚═══════════════════════════════════════════════════════════════════════════════╝
 ```
 
-![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)
+![License: BSL-1.1/AGPL-3.0/MPL-2.0](https://img.shields.io/badge/License-BSL--1.1%2FAGPL--3.0%2FMPL--2.0-blue.svg)
 ![VHDL: IEEE 1076](https://img.shields.io/badge/VHDL-IEEE_1076-green.svg)
 ![AES: FIPS 197](https://img.shields.io/badge/AES-FIPS_197-gold.svg)
 ![Lean 4: Formal](https://img.shields.io/badge/Lean_4-Formal-purple.svg)
 ![OpenQASM: 3.0](https://img.shields.io/badge/OpenQASM-3.0-orange.svg)
+![JXCL: ISA](https://img.shields.io/badge/JXCL-ISA-red.svg)
 ![Status: Verified](https://img.shields.io/badge/Status-Verified-brightgreen.svg)
 ![Cybersecurity: Hardened](https://img.shields.io/badge/Cybersecurity-Hardened-red.svg)
 
@@ -36,12 +37,16 @@
 
 ```bash
 # VHDL 測試平台 (تشغيل المحاكي)
-ghdl -a tlm_p3_gate.vhd tlm_p3_gate_tb.vhd
+ghdl -a vhdl/tlm_p3_gate.vhd vhdl/tlm_p3_gate_tb.vhd
 ghdl -e tlm_p3_gate_tb
 ghdl -r tlm_p3_gate_tb --wave=wave.ghw
 
 # Lean 4 形式化驗證 (التحقق الرياضي)
 lake build AES.Formal
+
+# JXCL ISA (JXCL ISA implementation)
+gcc -Wall -Wextra -O2 -o jxcl.exe jxcl/jxcl_main.c
+./jxcl.exe
 ```
 
 ### 驗證矩陣 / مصفوفة الثوابت / Verification Matrix
@@ -207,39 +212,39 @@ lake build AES.Formal
 ## File Structure
 
 ```
-tlm-p3q-system/
+tlm-jxcl/
 │
-├── VHDL Files
+├── vhdl/
 │   ├── tlm_p3_gate.vhd              Main MixColumns implementation
 │   ├── tlm_p3_gate_tb.vhd           Testbench with 10 vectors
-│   ├── anu_entropy_bridge.vhd        Entropy normalization unit
-│   ├── p3q_p4_handshake.vhd          Classical-quantum FSM
-│   └── p4_tsql_settler.vhd           T=SQL settlement sequencer
+│   ├── anu_entropy_bridge.vhd       Entropy normalization unit
+│   ├── p3q_p4_handshake.vhd         Classical-quantum FSM
+│   └── p4_tsql_settler.vhd          T=SQL settlement sequencer
 │
-├── Pascal
+├── pascal/
 │   ├── tlm_quantum_number_generator.pas  Recursive quantum generator
 │   └── tlm_qng_j.pas                    QNG variant
 │
-├── Lean 4
+├── lean4/
 │   └── P3QInterface.lean            Formal verification proofs
 │
-├── Python
+├── python/
 │   ├── tsql_engine.py               T=SQL query engine
 │   ├── p3q_simulator.py             Classical P4 interlock simulator
 │   └── p3q_tensor_sim.py            Tensor network simulator
 │
-├── OpenQASM 3.0
+├── qasm/
 │   ├── p3q_interface.qasm           Classical-quantum interface
 │   └── p3q_reversible_aes4.qasm     Reversible AES Grover oracle
 │
-├── JXCL ISA (C)
+├── jxcl/
 │   ├── jxcl_isa.h                   Types, opcodes, registers, memory map
 │   ├── jxcl_impl.h                  Primitives: xtime, MixColumns, GF(2^8), state
 │   ├── jxcl_impl2.h                 Spiral permutation, decode, execute, recursion
 │   ├── jxcl_impl3.h                 Machine, self-test, P3 compat, audit
 │   └── jxcl_main.c                  13-phase entrypoint
 │
-├── LICENSE                           MIT License
+├── LICENSE                           BSL-1.1 / AGPL-3.0 / MPL-2.0
 └── README.md                         This file
 ```
 
@@ -267,8 +272,8 @@ tlm-p3q-system/
 ### VHDL Simulation (GHDL)
 
 ```bash
-ghdl -a tlm_p3_gate.vhd
-ghdl -a tlm_p3_gate_tb.vhd
+ghdl -a vhdl/tlm_p3_gate.vhd
+ghdl -a vhdl/tlm_p3_gate_tb.vhd
 ghdl -e tlm_p3_gate_tb
 ghdl -r tlm_p3_gate_tb --stop-time=10ns
 ```
@@ -276,39 +281,34 @@ ghdl -r tlm_p3_gate_tb --stop-time=10ns
 ### Pascal Compilation (Free Pascal)
 
 ```bash
-fpc tlm_quantum_number_generator.pas
+fpc pascal/tlm_quantum_number_generator.pas
 ./tlm_quantum_number_generator
 ```
 
 ### Lean 4 Verification
 
 ```bash
-lean --run P3QInterface.lean
+lean --run lean4/P3QInterface.lean
 ```
 
 ### Python T=SQL Engine
 
 ```bash
-python3 tsql_engine.py
+python3 python/tsql_engine.py
 ```
 
 ### Python Tensor Simulator
 
 ```bash
-python3 p3q_tensor_sim.py
+python3 python/p3q_tensor_sim.py
 ```
 
 ### JXCL ISA Implementation
 
 ```bash
-gcc -Wall -Wextra -O2 -o jxcl.exe jxcl_main.c
+gcc -Wall -Wextra -O2 -o jxcl.exe jxcl/jxcl_main.c
 ./jxcl.exe
 ```
-
-13 phases: self-test (39 vectors), P3 compatibility, core frame execution,
-spiral consumption, recursive depth sweep, xtime exhaustive (256),
-mixcolumns exhaustive, full machine run, trace dump, source injection,
-fibonacci fold, boundary rotation, GF(2^56) multiply.
 
 ---
 
@@ -317,12 +317,17 @@ fibonacci fold, boundary rotation, GF(2^56) multiply.
 ```
 P4 ALGOL (Event/Settlement Semantics)
     │
-    ├── Classical Path ──────────► P3 VHDL (tlm_p3_gate)
+    ├── Classical Path ──────────► P3 VHDL (vhdl/tlm_p3_gate)
     │                                  │
     │                                  ▼
     │                           P2 GF(2^8) / P1 Boolean
     │
-    └── Quantum Path ───────────► P3Q OpenQASM 3.0
+    ├── JXCL ISA ───────────────► jxcl/jxcl_main.c
+    │                                  │
+    │                                  ▼
+    │                           13-phase deterministic execution
+    │
+    └── Quantum Path ───────────► qasm/p3q_interface.qasm
                                        │
                                        ├── quantum_keygen_256()     (QRNG)
                                        ├── quantum_nonce_128()      (QRNG)
@@ -330,7 +335,7 @@ P4 ALGOL (Event/Settlement Semantics)
                                        └── amplitude_estimation()   (Side-channel)
                                        │
                                        ▼
-                             Classical Simulator (Python)
+                             Classical Simulator (python/)
                              OR
                              Quantum Hardware (IBMQ, IonQ)
                              OR
@@ -355,9 +360,17 @@ P4 ALGOL (Event/Settlement Semantics)
 ## License
 
 ```
-MIT License - See LICENSE file for details.
+Triple License: BSL-1.1 / AGPL-3.0-or-later / MPL-2.0
 
-SPDX-License-Identifier: MIT
+You may select which license applies to your use of this software.
+
+- BSL-1.1: Business Source License 1.1 (converts to MPL-2.0 on Change Date)
+- AGPL-3.0: GNU Affero General Public License v3.0 or later
+- MPL-2.0: Mozilla Public License 2.0
+
+See LICENSE file for full text of all three licenses.
+
+SPDX-License-Identifier: BSL-1.1 OR AGPL-3.0-or-later OR MPL-2.0
 ```
 
 ---
@@ -365,6 +378,6 @@ SPDX-License-Identifier: MIT
 ```
 ╔═══════════════════════════════════════════════════════════════════════════════╗
 ║  VERIFIED  HARDENED  FORMAL                                                 ║
-║  TLM P3Q System - Gate-Level AES MixColumns + Quantum Interface             ║
+║  TLM-JXCL - JXCL ISA + Gate-Level AES MixColumns + Quantum Interface        ║
 ╚═══════════════════════════════════════════════════════════════════════════════╝
 ```
