@@ -231,11 +231,15 @@ tlm-jxcl/
 ├── python/
 │   ├── tsql_engine.py               T=SQL query engine
 │   ├── p3q_simulator.py             Classical P4 interlock simulator
-│   └── p3q_tensor_sim.py            Tensor network simulator
+│   ├── p3q_tensor_sim.py            Tensor network simulator
+│   └── watermark_stripper.py         AST-based watermark stripper
 │
 ├── qasm/
 │   ├── p3q_interface.qasm           Classical-quantum interface
 │   └── p3q_reversible_aes4.qasm     Reversible AES Grover oracle
+│
+├── rust/
+│   └── fibonacci_braid.rs           Lossless Fibonacci braid cipher
 │
 ├── jxcl/
 │   ├── jxcl_isa.h                   Types, opcodes, registers, memory map
