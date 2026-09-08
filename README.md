@@ -256,20 +256,6 @@ tlm-jxcl/
 │   ├── jxcl_impl3.h                 Machine, self-test, P3 compat, audit
 │   └── jxcl_main.c                  13-phase entrypoint
 │
-├── kimi_butterfly/
-│   ├── audit/                       Cryptographic state-event chain (Rust)
-│   ├── circuits/                    Recursively compressed hardware factors (Rust)
-│   ├── compiler/                    AST/IR optimizer + P4.5/SASS emitter (C++)
-│   ├── cuda/                        Three CUDA kernels bound by ThreadPiper
-│   ├── kernel/                      Kernel-space memory/context (Rust)
-│   ├── p45/                         Custom ISA definition
-│   ├── proof/                       Why3 verification contracts
-│   ├── rtl/                         Open fabric abstraction (SystemVerilog)
-│   ├── runtime/                     no_std Rust ThreadPiper scheduler
-│   ├── sass/                        Annotated SASS instruction layer
-│   ├── BUILD.sh                     Multi-toolchain build script
-│   └── README.md
-│
 ├── LICENSE                           BSL-1.1 / AGPL-3.0 / MPL-2.0
 └── README.md                         This file
 ```
